@@ -1,7 +1,8 @@
 package com.capgemini.training.service.mapper;
 
-import com.capgemini.training.model.BeneficiaryDetails;
 import com.capgemini.training.repository.entity.BeneficiaryEntity;
+import com.capgemini.training.service.model.BeneficiaryDTO;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,16 +10,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BeneficiaryMapper {
 
-  public BeneficiaryDetails toBeneficiaryDetails(BeneficiaryEntity beneficiaryEntity) {
-    return BeneficiaryDetails.builder()
+  public BeneficiaryDTO toBeneficiaryDto(BeneficiaryEntity beneficiaryEntity) {
+    return BeneficiaryDTO.builder()
         .beneficiaryId(beneficiaryEntity.getBeneficiaryId())
         .creationDate(beneficiaryEntity.getCreationDate().toLocalDate())
         .updateDate(beneficiaryEntity.getUpdatedDate().toLocalDate())
         .build();
   }
 
-  public BeneficiaryEntity toBeneficiaryEntity(BeneficiaryDetails beneficiaryDetails) {
-
-    return BeneficiaryEntity.builder().beneficiaryId(beneficiaryDetails.getBeneficiaryId()).build();
+  public BeneficiaryEntity toBeneficiaryEntity(BeneficiaryDTO beneficiaryDto) {
+    return BeneficiaryEntity.builder()
+        .beneficiaryId(beneficiaryDto.getBeneficiaryId())
+        .creationDate(beneficiaryDto.getCreationDate().atStartOfDay(ZoneId.systemDefault()))
+        .updatedDate(beneficiaryDto.getUpdateDate().atStartOfDay(ZoneId.systemDefault()))
+        .build();
   }
 }

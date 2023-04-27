@@ -1,7 +1,7 @@
 package com.capgemini.training.service.mapper;
 
-import com.capgemini.training.model.CustomerDetails;
 import com.capgemini.training.repository.entity.CustomerEntity;
+import com.capgemini.training.service.model.CustomerDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerMapper {
 
-  public CustomerDetails toCustomerDetails(CustomerEntity customer) {
-    return CustomerDetails.builder()
+  public CustomerDTO toCustomerDto(CustomerEntity customer) {
+    return CustomerDTO.builder()
         .customerId(customer.getCustomerId())
         .documentType(customer.getDocumentType())
         .documentNumber(customer.getDocumentNumber())
@@ -24,7 +24,7 @@ public class CustomerMapper {
         .build();
   }
 
-  public CustomerEntity toCustomerEntity(CustomerDetails customerDetails) {
+  public CustomerEntity toCustomerEntity(CustomerDTO customerDetails) {
 
     return CustomerEntity.builder()
         .customerId(customerDetails.getCustomerId())

@@ -1,5 +1,6 @@
-package com.capgemini.training.model;
+package com.capgemini.training.service.model;
 
+import com.capgemini.training.commons.model.DocumentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode()
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class CustomerDetails {
+public class CustomerDTO {
 
   @Schema(title = "customerId", example = "1234567891", description = "Customer identifier.")
   @NotBlank

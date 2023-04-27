@@ -1,34 +1,42 @@
 package com.capgemini.training.repository.entity;
 
-import com.capgemini.training.model.DocumentType;
+import com.capgemini.training.commons.model.DocumentType;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "customer")
+@ToString(exclude = "payments")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CustomerEntity extends BaseEntity {
 
   @Id
   @Column(name = "customer_id", nullable = false)
+  @EqualsAndHashCode.Include
   private String customerId;
 
   @Column(name = "document_type", nullable = false)
+  @Enumerated(EnumType.STRING)
   private DocumentType documentType;
 
   @Column(name = "document_number", nullable = false)

@@ -7,22 +7,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "beneficiary")
+@SuperBuilder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BeneficiaryEntity extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "beneficiary_id", nullable = false)
+  @EqualsAndHashCode.Include
   private String beneficiaryId;
 }

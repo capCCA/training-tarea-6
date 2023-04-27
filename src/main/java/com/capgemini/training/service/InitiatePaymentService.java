@@ -1,15 +1,17 @@
 package com.capgemini.training.service;
 
+import com.capgemini.training.controller.model.request.PaymentCreateRequest;
+import com.capgemini.training.controller.model.response.PaymentResponse;
 import com.capgemini.training.exception.BeneficiaryNotFoundException;
 import com.capgemini.training.exception.CustomerNotFoundException;
-import com.capgemini.training.model.BeneficiaryDetails;
-import com.capgemini.training.model.CustomerDetails;
-import com.capgemini.training.model.PaymentCreateRequest;
-import com.capgemini.training.model.PaymentResponse;
 import com.capgemini.training.repository.BeneficiaryRepository;
 import com.capgemini.training.repository.CustomerRepository;
 import com.capgemini.training.repository.PaymentRepository;
+import com.capgemini.training.repository.entity.PaymentEntity;
 import com.capgemini.training.service.mapper.CustomMapper;
+import com.capgemini.training.service.model.BeneficiaryDTO;
+import com.capgemini.training.service.model.CustomerDTO;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,26 +23,37 @@ public class InitiatePaymentService {
   private final BeneficiaryRepository beneficiaryRepository;
   private final PaymentRepository paymentRepository;
   private final CustomMapper mapper;
+  private final String ITEM_NOT_FOUND = "%s %s not found";
 
+  @Transactional
   public PaymentResponse initiatePayment(PaymentCreateRequest paymentCreateRequest) {
-
-    CustomerDetails customerDetails =
+    CustomerDTO customerDetails =
         customerRepository
             .findById(paymentCreateRequest.getCustomerId())
-            .map(customer -> mapper.getCustomerMapper().toCustomerDetails(customer))
-            .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-    BeneficiaryDetails beneficiaryDetails =
+            .map(customer -> mapper.getCustomerMapper().toCustomerDto(customer))
+            .orElseThrow(
+                () ->
+                    new CustomerNotFoundException(
+                        String.format(
+                            ITEM_NOT_FOUND, "Customer", paymentCreateRequest.getCustomerId())));
+
+    BeneficiaryDTO beneficiaryDetails =
         beneficiaryRepository
             .findById(paymentCreateRequest.getBeneficiaryId())
-            .map(beneficiary -> mapper.getBeneficiaryMapper().toBeneficiaryDetails(beneficiary))
-            .orElseThrow(() -> new BeneficiaryNotFoundException("Beneficiary not found"));
+            .map(beneficiary -> mapper.getBeneficiaryMapper().toBeneficiaryDto(beneficiary))
+            .orElseThrow(
+                () ->
+                    new BeneficiaryNotFoundException(
+                        String.format(
+                            ITEM_NOT_FOUND,
+                            "Beneficiary",
+                            paymentCreateRequest.getBeneficiaryId())));
 
-    return mapper
-        .getPaymentMapper()
-        .toPaymentResponse(
-            paymentRepository.save(
-                mapper
-                    .getPaymentMapper()
-                    .toPaymentEntity(paymentCreateRequest, customerDetails, beneficiaryDetails)));
+    PaymentEntity paymentEntity =
+        mapper
+            .getPaymentMapper()
+            .toPaymentEntity(paymentCreateRequest, customerDetails, beneficiaryDetails);
+
+    return mapper.getPaymentMapper().toPaymentResponse(paymentRepository.save(paymentEntity));
   }
 }

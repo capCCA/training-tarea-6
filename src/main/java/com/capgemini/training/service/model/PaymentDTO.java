@@ -1,5 +1,6 @@
-package com.capgemini.training.model;
+package com.capgemini.training.service.model;
 
+import com.capgemini.training.commons.model.PaymentType;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
@@ -15,12 +16,12 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode()
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class PaymentDetails {
+public class PaymentDTO {
 
   private Long paymentId;
-  private CustomerDetails customer;
-  private BeneficiaryDetails beneficiary;
-  private String paymentType;
+  private CustomerDTO customer;
+  private BeneficiaryDTO beneficiary;
+  private PaymentType paymentType;
   private BigDecimal amount;
   private ZonedDateTime creationDate;
   private ZonedDateTime updateDate;

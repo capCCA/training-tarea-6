@@ -1,36 +1,38 @@
 package com.capgemini.training.service.mapper;
 
-import com.capgemini.training.model.BeneficiaryDetails;
-import com.capgemini.training.model.CustomerDetails;
-import com.capgemini.training.model.PaymentCreateRequest;
-import com.capgemini.training.model.PaymentDetails;
-import com.capgemini.training.model.PaymentResponse;
+import com.capgemini.training.controller.model.request.PaymentCreateRequest;
+import com.capgemini.training.controller.model.request.PaymentUpdateRequest;
+import com.capgemini.training.controller.model.response.PaymentResponse;
 import com.capgemini.training.repository.entity.PaymentEntity;
+import com.capgemini.training.service.model.BeneficiaryDTO;
+import com.capgemini.training.service.model.CustomerDTO;
+import com.capgemini.training.service.model.PaymentDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Builder
-@EqualsAndHashCode()
+@EqualsAndHashCode
 @RequiredArgsConstructor
-@ToString()
+@ToString
 @Component
 public class PaymentMapper {
 
   private final CustomerMapper customerMapper;
   private final BeneficiaryMapper beneficiaryMapper;
 
-  public PaymentDetails toPaymentDetails(PaymentEntity paymentEntity) {
-    return PaymentDetails.builder()
+  public PaymentDTO toPaymentDto(PaymentEntity paymentEntity) {
+    return PaymentDTO.builder()
         .paymentId(paymentEntity.getPaymentId())
-        .customer(customerMapper.toCustomerDetails(paymentEntity.getCustomer()))
+        .customer(customerMapper.toCustomerDto(paymentEntity.getCustomer()))
         .amount(paymentEntity.getAmount())
         .paymentType(paymentEntity.getPaymentType())
-        .beneficiary(beneficiaryMapper.toBeneficiaryDetails(paymentEntity.getBeneficiary()))
+        .beneficiary(beneficiaryMapper.toBeneficiaryDto(paymentEntity.getBeneficiary()))
         .creationDate(paymentEntity.getCreationDate())
         .updateDate(paymentEntity.getUpdatedDate())
         .build();
@@ -38,25 +40,27 @@ public class PaymentMapper {
 
   public PaymentEntity toPaymentEntity(
       PaymentCreateRequest paymentCreateRequest,
-      CustomerDetails customerDetails,
-      BeneficiaryDetails beneficiaryDetails) {
+      CustomerDTO customerDto,
+      BeneficiaryDTO beneficiaryDto) {
 
     return PaymentEntity.builder()
-        .customer(customerMapper.toCustomerEntity(customerDetails))
-        .beneficiary(beneficiaryMapper.toBeneficiaryEntity(beneficiaryDetails))
+        .customer(customerMapper.toCustomerEntity(customerDto))
+        .beneficiary(beneficiaryMapper.toBeneficiaryEntity(beneficiaryDto))
         .paymentType(paymentCreateRequest.getPaymentType())
         .amount(paymentCreateRequest.getAmount())
         .build();
   }
 
-  public PaymentEntity toEntity(PaymentDetails paymentDetails) {
+  public PaymentEntity toPaymentEntity(PaymentDTO paymentDto, PaymentUpdateRequest paymentRequest) {
 
     return PaymentEntity.builder()
-        .customer(customerMapper.toCustomerEntity(paymentDetails.getCustomer()))
-        .beneficiary(beneficiaryMapper.toBeneficiaryEntity(paymentDetails.getBeneficiary()))
-        .paymentType(paymentDetails.getPaymentType())
-        .amount(paymentDetails.getAmount())
-        .creationDate(paymentDetails.getCreationDate())
+        .paymentId(paymentRequest.getPaymentId())
+        .customer(customerMapper.toCustomerEntity(paymentDto.getCustomer()))
+        .beneficiary(beneficiaryMapper.toBeneficiaryEntity(paymentDto.getBeneficiary()))
+        .paymentType(
+            ObjectUtils.defaultIfNull(paymentRequest.getPaymentType(), paymentDto.getPaymentType()))
+        .amount(ObjectUtils.defaultIfNull(paymentRequest.getAmount(), paymentDto.getAmount()))
+        .creationDate(paymentDto.getCreationDate())
         .build();
   }
 

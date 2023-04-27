@@ -1,4 +1,4 @@
-package com.capgemini.training.model;
+package com.capgemini.training.service.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode()
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class BeneficiaryDetails {
+public class BeneficiaryDTO {
 
   private String beneficiaryId;
   private LocalDate creationDate;
